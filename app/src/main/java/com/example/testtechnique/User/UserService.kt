@@ -9,25 +9,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class UserService {
-    public fun findUsers(onResult: (ApiResponse?) -> Unit, onError: (Throwable) -> Unit)  {
+    public suspend fun findUsers() : ApiResponse?  {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://reqres.in/")
             .build()
         val userApi : UserApi = retrofit.create(UserApi::class.java)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val response = userApi.getUsers().execute().body()
-                withContext(Dispatchers.Main) {
-                    onResult(response)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onError(e)
-                }
-            }
-        }
+        val response = userApi.getUsers().execute().body()
+        return response
 
     }
 

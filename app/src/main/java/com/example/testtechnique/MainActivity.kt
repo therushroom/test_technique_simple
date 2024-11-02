@@ -8,6 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.testtechnique.User.User
 import com.example.testtechnique.User.UserService
 import com.example.testtechnique.UserRecylerView.UserAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity(){
 
@@ -22,19 +26,17 @@ class MainActivity : AppCompatActivity(){
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         var users = mutableListOf<User>();
-        UserService().findUsers(
-            onResult = { data ->
-                //
-                for( user in data?.data!!) {
-                    users.add(user)
-                    Log.i("user " , user.avatar)
-                }
+        CoroutineScope(Dispatchers.IO).launch {
+            var data = UserService().findUsers()
+            for( user in data?.data!!) {
+                users.add(user)
+                Log.i("user " , user.avatar)
+            }
+            withContext(Dispatchers.Main) {
                 adapter = UserAdapter(users)
                 recyclerView.adapter = adapter
-            },
-            onError = {error -> Log.i("error", error.message?:"wd")}
-
-        )
+            }
+        }
 
 
     }
