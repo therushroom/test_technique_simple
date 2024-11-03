@@ -3,6 +3,7 @@ package com.example.testtechnique
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testtechnique.User.User
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity(){
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         var users = mutableListOf<User>();
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             var data = UserService().findUsers()
             for( user in data?.data!!) {
                 users.add(user)
