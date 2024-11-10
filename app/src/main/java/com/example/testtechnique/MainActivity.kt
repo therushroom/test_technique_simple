@@ -1,23 +1,24 @@
 package com.example.testtechnique
 
 import android.os.Bundle
-import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testtechnique.User.User
-import com.example.testtechnique.User.UserService
+import com.example.testtechnique.User.UserViewModel
 import com.example.testtechnique.UserRecylerView.UserAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(){
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: UserAdapter
+    private val viewModel: UserViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,19 +27,13 @@ class MainActivity : AppCompatActivity(){
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        var users = mutableListOf<User>();
-        lifecycleScope.launch(Dispatchers.IO) {
-            var data = UserService().findUsers()
-            for( user in data?.data!!) {
-                users.add(user)
-                Log.i("user " , user.avatar)
-            }
-            withContext(Dispatchers.Main) {
+        lifecycleScope.launch {
+            viewModel.users.collect{
+                    users ->
                 adapter = UserAdapter(users)
                 recyclerView.adapter = adapter
             }
         }
-
 
     }
 

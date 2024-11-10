@@ -1,15 +1,13 @@
 package com.example.testtechnique.User
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
 
-class UserService {
-    public suspend fun findUsers() : ApiResponse?  {
+class UserRepository @Inject constructor() {
+    public suspend fun getUsers() : List<User>  {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://reqres.in/")
@@ -17,7 +15,8 @@ class UserService {
         val userApi : UserApi = retrofit.create(UserApi::class.java)
 
         val response = userApi.getUsers().execute().body()
-        return response
+        delay(1000)
+        return response?.data ?: emptyList()
 
     }
 
