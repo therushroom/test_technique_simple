@@ -8,6 +8,7 @@ import com.bumptech.glide.Glide
 import com.example.testtechnique.R
 import com.example.testtechnique.User.User
 
+
 class UserViewHolder(private val userView : View) : RecyclerView.ViewHolder(userView) {
 
     private val avatarView : ImageView = userView.findViewById(R.id.Avatar)
